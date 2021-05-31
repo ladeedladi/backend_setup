@@ -1,0 +1,48 @@
+const express=require('express')
+const path=require('path')
+const app=express()
+const adminRoutes=require('./routes1/admin1')
+const shopRoutes=require('./routes1/shop1')
+const productControl=require('./controllers/products')
+const error=require('./controllers/error')
+const formRoutes=require('./routes1/form1')
+app.use(express.static(path.join(__dirname,'public')));
+//              enctype
+app.use(express.urlencoded({extended:false}))
+app.use('/admin',adminRoutes)
+app.use('/shop',shopRoutes)
+app.get('/products/:productid',productControl.getProduct)
+app.use(formRoutes)
+app.use(error.get404)
+
+app.listen(3000);
+const path=require('path')
+const Products = require('../model/product')
+
+const Product=require('../model/product')
+const rootDir=require('../util1/path')
+exports.getAddproducts=(req,res,next)=>{
+  res.sendFile(path.join(rootDir,'views1','add-product.html'))
+}
+
+exports.getProduct=(req,res,next)=>{
+  console.log(req.params.productid)
+  res.send('<h1>product details.......</h1>')
+}
+
+
+
+exports.postAddproducts=(req,res,next)=>{
+  const product=new Product(req.body.title)
+  
+  product.save()
+  
+  res.redirect('/shop')
+  
+}
+exports.custProduct=(req,res,next)=>{
+  Product.fetchAll(product=>{
+    res.sendFile(path.join(rootDir,'views1','shop.html'))
+  });
+  
+}
